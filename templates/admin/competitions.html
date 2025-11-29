@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des competitions - Masmoudi Wedding Planner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { background: #f5f5f5; font-size: 14px; }
+        .header { background: linear-gradient(135deg, #131001 0%, #725305 100%); color: #c3e6cb; padding: 15px; }
+        .gold-badge { background: #FFD700; color: #333; }
+        .platinum-badge { background: #E5E4E2; color: #333; }
+        .winner-badge { background: #28a745; color: white; }
+        .modal-lg { max-width: 900px; }
+        .participant-card { transition: all 0.3s; cursor: pointer; }
+        .participant-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .btn-gold { background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%); color: #333; border: none; }
+        .btn-gold:hover { opacity: 0.9; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="header d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <img src="/static/mwp_logo.png" alt="Logo" style="width: 50px; height: 50px;">
+            <h3 class="mb-0">Gestion des Competitions</h3>
+        </div>
+        <button class="btn btn-outline-light btn-sm" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i> 
+        </button>
+    </div>
+
+    <div class="container-fluid py-4">
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-between mb-4">
+            <button class="btn btn-gold" onclick="showCreateCompetitionModal()">
+                <i class="fas fa-plus"></i> Nouveau Competition
+            </button>
+            <button class="btn btn-secondary" onclick="loadCompetitions()">
+                <i class="fas fa-sync"></i> Actualiser
+            </button>
+        </div>
+
+        <!-- Competitions List -->
+        <div class="row" id="competitionsContainer">
+            <!-- Competitions will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Create/Edit Competition Modal -->
+    <div class="modal fade" id="competitionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title" id="modalTitle">Nouveau Competitions</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="competitionForm">
+                        <input type="hidden" id="competitionId">
+                        <div class="mb-3">
+                            <label class="form-label">Nom du Competition *</label>
+                            <input type="text" class="form-control" id="competitionName" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Date de Début *</label>
+                                <input type="datetime-local" class="form-control" id="startDate" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Date de Fin *</label>
+                                <input type="datetime-local" class="form-control" id="endDate" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Deadline d'Inscription *</label>
+                            <input type="datetime-local" class="form-control" id="registrationDeadline" required>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="isActive" checked>
+                            <label class="form-check-label" for="isActive">Competition Actif</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-warning" onclick="saveCompetition()">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Participants Modal -->
+    <div class="modal fade" id="participantsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class=" header modal-header text-white">
+                    <h5 class="modal-title">Participants du Competition</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="currentCompetitionId">
+                    
+                    <!-- Add Participant Section -->
+                    <div class="card mb-3">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Ajouter un Participant</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group">
+                                <select class="form-select" id="userSelect">
+                                    <option value="">Sélectionner un client...</option>
+                                </select>
+                                <button class="btn btn-warning" onclick="addParticipant()">
+                                    <i class="fas fa-plus"></i> Ajouter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Participants List -->
+                    <div class="row" id="participantsList">
+                        <!-- Participants will be loaded here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-gold" onclick="updateLikes()">
+                        <i class="fas fa-sync"></i> Actualiser les Likes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let allUsers = [];
+        let currentCompetition = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCompetitions();
+            loadAllUsers();
+        });
+
+        function goBack() {
+            window.location.href = '/admin/dashboard';
+        }
+
+        // Load all competitions
+        function loadCompetitions() {
+            fetch('/api/competitions')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayCompetitions(data.competitions);
+                    } else {
+                        showAlert('Erreur de chargement des Competition', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('Erreur de connexion', 'danger');
+                });
+        }
+
+        // Display competitions
+        function displayCompetitions(competitions) {
+            const container = document.getElementById('competitionsContainer');
+            
+            if (!competitions || competitions.length === 0) {
+                container.innerHTML = '<div class="col-12"><div class="alert alert-info">Aucun Competition trouvé</div></div>';
+                return;
+            }
+
+            container.innerHTML = competitions.map(comp => {
+                const status = comp.is_active ? '<span class="badge bg-success">Actif</span>' : '<span class="badge bg-secondary">Inactif</span>';
+                const startDate = new Date(comp.start_date).toLocaleDateString('fr-FR');
+                const endDate = new Date(comp.end_date).toLocaleDateString('fr-FR');
+                const winner = comp.winner_name ? `<div class="mt-2"><strong>Gagnant:</strong> ${comp.winner_name}</div>` : '';
+                const didlineDate = new Date(comp.registration_deadline).toLocaleDateString('fr-FR');
+                
+                return `
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-header header text-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">${comp.name}</h5>
+                                ${status}
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Début de competition:</strong> ${startDate}</p>
+                                 <p><strong>Fin d'enregistrement:</strong> ${didlineDate}</p>
+                                <p><strong>Fin de competition:</strong> ${endDate}</p>
+                                <p><strong>Participants:</strong> ${comp.participants_count || 0}</p>
+                                ${winner}
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="btn-group w-100" role="group">
+                                    <button class="btn btn-sm btn-outline-warning me-2" onclick="viewParticipants(${comp.id})">
+                                        <i class="fas fa-users"></i> Participants
+                                    </button>
+                                    
+                                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="editCompetition(${comp.id})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    
+                                    <button class="btn btn-sm btn-outline-danger me-2" onclick="deleteCompetition(${comp.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- Competition CRUD Logic ---
+
+        const competitionModal = new bootstrap.Modal(document.getElementById('competitionModal'));
+
+        function showCreateCompetitionModal() {
+            document.getElementById('competitionForm').reset();
+            document.getElementById('competitionId').value = '';
+            document.getElementById('modalTitle').innerText = 'Nouveau Competition';
+            competitionModal.show();
+        }
+
+        function editCompetition(id) {
+            fetch(`/api/competitions/${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const comp = data.competition;
+                        document.getElementById('competitionId').value = comp.id;
+                        document.getElementById('competitionName').value = comp.name;
+                        document.getElementById('startDate').value = formatDateForInput(comp.start_date);
+                        document.getElementById('endDate').value = formatDateForInput(comp.end_date);
+                        document.getElementById('registrationDeadline').value = formatDateForInput(comp.registration_deadline);
+                        document.getElementById('isActive').checked = comp.is_active;
+                        
+                        document.getElementById('modalTitle').innerText = 'Modifier le Competition';
+                        competitionModal.show();
+                    }
+                });
+        }
+
+        function saveCompetition() {
+            const id = document.getElementById('competitionId').value;
+            const data = {
+                name: document.getElementById('competitionName').value,
+                start_date: document.getElementById('startDate').value,
+                end_date: document.getElementById('endDate').value,
+                registration_deadline: document.getElementById('registrationDeadline').value,
+                is_active: document.getElementById('isActive').checked
+            };
+
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `/api/competitions/${id}` : '/api/competitions';
+
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    competitionModal.hide();
+                    loadCompetitions();
+                    showAlert('Competition enregistré avec succès', 'success');
+                } else {
+                    showAlert('Erreur lors de l\'enregistrement', 'danger');
+                }
+            });
+        }
+
+        function deleteCompetition(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce Competition ?')) {
+                fetch(`/api/competitions/${id}`, { method: 'DELETE' })
+                    .then(res => res.json())
+                    .then(result => {
+                        if (result.success) {
+                            loadCompetitions();
+                            showAlert('Competition supprimé', 'success');
+                        }
+                    });
+            }
+        }
+
+        // --- Participants Logic ---
+
+        const participantsModal = new bootstrap.Modal(document.getElementById('participantsModal'));
+
+        function loadAllUsers() {
+            fetch('/api/users') // Endpoint returning list of all users {id, full_name, id_qr_code}
+                .then(res => res.json())
+                .then(data => {
+                    allUsers = data.users;
+                    const select = document.getElementById('userSelect');
+                    select.innerHTML = '<option value="">Sélectionner un client...</option>' + 
+                        allUsers.map(u => `<option value="${u.id}">${u.full_name} (${u.id_qr_code})</option>`).join('');
+                });
+        }
+
+        function viewParticipants(competitionId) {
+            document.getElementById('currentCompetitionId').value = competitionId;
+            currentCompetition = competitionId;
+            loadParticipants(competitionId);
+            participantsModal.show();
+        }
+
+        function loadParticipants(competitionId) {
+            fetch(`/api/competitions/${competitionId}/participants`)
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById('participantsList');
+                    if (data.participants.length === 0) {
+                        list.innerHTML = '<div class="col-12"><div class="alert alert-light">Aucun participant.</div></div>';
+                        return;
+                    }
+
+                    list.innerHTML = data.participants.map(p => {
+                        const badgeClass = p.is_gold ? 'gold-badge' : 'platinum-badge';
+                        const badgeText = p.is_gold ? 'Gold' : 'Platinum';
+                        const winBtn = p.is_winner ? 
+                            `<span class="badge bg-success"><i class="fas fa-trophy"></i> Gagnant</span>` :
+                            `<button class="btn btn-sm btn-outline-success" onclick="setWinner(${competitionId}, ${p.id})">Désigner Gagnant</button>`;
+
+                        return `
+                        <div class="col-md-12 mb-2">
+                            <div class="card participant-card">
+                                <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="badge ${badgeClass} rounded-circle p-2" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
+                                            ${p.id}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">${p.full_name}</h6>
+                                            <small class="text-muted">QR: ${p.id_qr_code}</small>
+                                            <div class="mt-1">
+                                                <i class="fab fa-facebook text-primary"></i> 
+                                                <strong>${p.likes_number} Likes</strong>
+                                               <i class="fas fa-eye text-secondary"></i>
+                                                <strong>${p.views_number} Views</strong>
+                                                ${p.url ? '<a href="'+p.url+'" target="_blank" class="ms-2"><i class="fas fa-link"></i> Vidéo</a>' : '<span class="text-danger ms-2"><i class="fas fa-exclamation-circle"></i> Pas de lien</span>'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        ${winBtn}
+                                        <button class="btn btn-sm btn-outline-danger" onclick="removeParticipant(${competitionId}, ${p.id})">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    }).join('');
+                });
+        }
+
+        function addParticipant() {
+            const userId = document.getElementById('userSelect').value;
+            const compId = document.getElementById('currentCompetitionId').value;
+            
+            if (!userId) return showAlert('Veuillez sélectionner un utilisateur', 'warning');
+
+            fetch(`/api/competitions/${compId}/participants`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId })
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    loadParticipants(compId);
+                    loadCompetitions(); // Refresh counts on main page
+                } else {
+                    showAlert(result.message || 'Erreur lors de l\'ajout', 'danger');
+                }
+            });
+        }
+
+        function removeParticipant(compId, userId) {
+            if(!confirm('Retirer ce participant ?')) return;
+            
+            fetch(`/api/competitions/${compId}/participants/${userId}`, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(result => {
+                if(result.success) {
+                    loadParticipants(compId);
+                    loadCompetitions();
+                }
+            });
+        }
+
+        function updateLikes() {
+            const compId = document.getElementById('currentCompetitionId').value;
+            const btn = document.querySelector('#participantsModal .btn-warning');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mise à jour...';
+            btn.disabled = true;
+
+            fetch(`/api/competitions/${compId}/update_likes`, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    loadParticipants(compId);
+                    showAlert('Likes mis à jour avec succès', 'success');
+                })
+                .finally(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        }
+
+        function setWinner(compId, userId) {
+            if(!confirm('Confirmer ce participant comme gagnant ?')) return;
+
+            fetch(`/api/competitions/${compId}/winner`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId })
+            })
+            .then(res => res.json())
+            .then(result => {
+                if(result.success) {
+                    loadParticipants(compId);
+                    loadCompetitions();
+                }
+            });
+        }
+
+        // --- Helpers ---
+
+        function formatDateForInput(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            // Format: YYYY-MM-DDThh:mm
+            return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+        }
+
+        function showAlert(message, type = 'success') {
+            // Simple alert implementation, can be replaced with a toast
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} position-fixed top-0 end-0 m-3`;
+            alertDiv.style.zIndex = 9999;
+            alertDiv.innerHTML = message;
+            document.body.appendChild(alertDiv);
+            setTimeout(() => alertDiv.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

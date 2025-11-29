@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MASMOUDI Wedding Planner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f0e5d8;
+            --gold-dim: rgba(212, 175, 55, 0.2);
+            --dark: #1a1a1a;
+            --dark-light: #2d2d2d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+            /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--gold-dim);
+            padding: 15px 20px;
+            margin: 0 0 15% 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .brand-name {
+            font-size: 1.1em;
+            color: var(--gold);
+            letter-spacing: 2px;
+            font-weight: 400;
+        }
+
+        .btn-user {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--gold-light);
+            border: 1px solid var(--gold-dim);
+            padding: 10px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-user:hover {
+            background: var(--gold);
+            color: var(--dark);
+        }
+
+        /* Container */
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Card */
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--gold-dim);
+            padding: 30px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Avatar Section */
+        .avatar-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--gold), #b59022);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            color: var(--dark);
+            margin-bottom: 15px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .client-name {
+            
+            font-size: 2em;
+            color: var(--gold);
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .points-badge {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9em;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 1.3em;
+            color: var(--gold);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gold-dim);
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        /* Info Rows */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-row:last-child { border-bottom: none; }
+
+        .info-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85em;
+            color: var(--gold-light);
+            opacity: 0.7;
+        }
+
+        .info-value {
+            color: #fff;
+            font-size: 1.1em;
+        }
+
+        /* Payment Boxes */
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .payment-box {
+           
+            border: 1px solid var(--gold-dim);
+            padding: 20px 10px;
+            text-align: center;
+            transition: background 0.3s;
+        }
+
+        .payment-box:hover { background: rgba(212, 175, 55, 0.08); }
+
+        .payment-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7em;
+            color: var(--gold-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            opacity: 0.7;
+        }
+
+        .payment-amount {
+            font-size: 1.5em;
+            color: var(--gold);
+            font-weight: 300;
+        }
+
+        .amount-original {
+            font-size: 1em;
+            text-decoration: line-through;
+            opacity: 0.5;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .discount-badge {
+            display: inline-block;
+            background: #e63947;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.7em;
+            margin-top: 5px;
+        }
+
+        .paid { color: #a7a528; }
+        .remaining { color: #e69039; }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85em;
+            color: var(--gold);
+            display: block;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--gold-dim);
+            color: #fff;
+            padding: 12px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1em;
+            resize: vertical;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-control::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+        /* Save Button */
+        .save-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--gold), #b59022);
+            color: var(--dark);
+            border: none;
+            padding: 15px;
+            font-size: 0.7em;
+            font-weight: 600;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+            text-transform: uppercase;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .save-btn.success {
+            background: #87a728;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body { padding: 0; }
+
+             .header {
+                padding: 12px 15px;
+                margin: 0 0 20px 0;
+                border-left: none;
+                border-right: none;
+            }
+
+
+            .brand-name {
+                font-family: 'Cormorant Garamond', serif !important;
+                font-size: 1em;
+                letter-spacing: 1px;
+            }
+
+            .brand-subtitle {
+                font-size: 0.65em;
+            }
+
+            .back-btn { font-size: 1.2em; }
+
+            .container { padding: 15px; }
+
+            .card { padding: 20px; }
+
+            .client-name {
+                font-size: 1.6em;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .payment-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .payment-amount { font-size: 1.3em; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <img src="{{ url_for('static', filename='mwp_logo.png') }}" alt="Logo" class="logo-img">
+        <span class="brand-name">Masmoudi Wedding Planner</span>
+        {% if user.is_gold %}
+        <button class="btn-user" onclick="window.location.href='{{ url_for('user_bp.user_home', qr_id=user.id_qr_code) }}'">          
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+        </button>
+        {% endif %}
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Avatar Card -->
+        <div class="card">
+            <div class="avatar-section">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="client-name">{{ user.full_name }}</div>
+                <div class="points-badge">
+                    <i class="fas fa-star"></i> {{ user.points }} Points
+                </div>
+            </div>
+        </div>
+
+        <!-- Client Information -->
+        <div class="card">
+            <h3 class="section-title"><i class="fas fa-info-circle"></i> Informations Client</h3>
+            <div class="info-row">
+                <span class="info-label">Nom Complet</span>
+                <span class="info-value">{{ user.full_name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Numéro de Téléphone</span>
+                <span class="info-value">{{ user.phone_number }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Date d'Événement</span>
+                <span class="info-value">{{ user.date_wedding }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Lieu</span>
+                <span class="info-value">{{ user.lieu_wedding }}</span>
+            </div>
+        </div>
+
+        <!-- Payment Details -->
+        <div class="card">
+            <h3 class="section-title"><i class="fas fa-money-bill-wave"></i> Détails de Paiement</h3>
+            
+            <div class="payment-grid">
+                <div class="payment-box">
+                    <div class="payment-label">Montant Total</div>
+                    {% if user.reduction > 0 %}
+                        <span class="amount-original">{{ user.solde_to_pay }} DT</span>
+                        <div class="payment-amount">{{ user.solde_to_pay - user.reduction }} DT</div>
+                        <span class="discount-badge">{{ "%.0f"|format((user.reduction/user.solde_to_pay) * 100) }}% de Réduction</span>
+                    {% else %}
+                        <div class="payment-amount">{{ user.solde_to_pay }} DT</div>
+                    {% endif %}
+                </div>
+
+                <div class="payment-box">
+                    <div class="payment-label">Avance Payée</div>
+                    <div class="payment-amount paid">{{ user.avance_paid }} DT</div>
+                </div>
+                
+                <div class="payment-box">
+                    <div class="payment-label">Reste à Payer</div>
+                    <div class="payment-amount remaining">{{  user.remaining_to_pay}} DT</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Music Selection -->
+        <div class="card">
+            <h3 class="section-title"><i class="fas fa-music"></i> Sélection Musicale</h3>
+            
+            <div class="form-group">
+                <label class="form-label">Musique de "Slow"</label>
+                <textarea class="form-control" id="slowDanceMusic" rows="2" placeholder="Perfect - Ed Sheeran...">{{ user.slow_music }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Musique d'Entrée des Mariés</label>
+                <textarea class="form-control" id="coupleInMusic" rows="2" placeholder="Entrez les chansons pour l'entrée des mariés...">{{ user.in_music }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Autres Musiques Spéciales</label>
+                <textarea class="form-control" id="otherMusic" rows="3" placeholder="Entrez d'autres demandes musicales spéciales...">{{ user.special_music }}</textarea>
+            </div>
+        </div>
+
+        <!-- Notes & Remarks -->
+        <div class="card">
+            <h3 class="section-title"><i class="fas fa-sticky-note"></i> Notes et Remarques</h3>
+            <textarea class="form-control" id="generalNotes" rows="5" placeholder="Ajoutez des notes ou exigences spéciales...">{{ user.note }}</textarea>
+        </div>
+
+        <!-- Save Button -->
+        <button class="save-btn" id="saveBtn">
+            <i class="fas fa-save"></i> Enregistrer les Modifications
+        </button>
+    </div>
+
+    <script>
+        document.getElementById('saveBtn').addEventListener('click', async function() {
+            const btn = this;
+            const originalText = btn.innerHTML;
+
+            const data = {
+                slow_music: document.getElementById('slowDanceMusic').value.trim(),
+                in_music: document.getElementById('coupleInMusic').value.trim(),
+                special_music: document.getElementById('otherMusic').value.trim(),
+                note: document.getElementById('generalNotes').value.trim()
+            };
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/update_user/{{ user.id_qr_code }}', {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.status === 'success') {
+                    btn.classList.add('success');
+                    btn.innerHTML = '<i class="fas fa-check-circle"></i> Enregistré avec Succès!';
+                } else {
+                    btn.innerHTML = '<i class="fas fa-times-circle"></i> Échec de l\'Enregistrement!';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                btn.innerHTML = '<i class="fas fa-times-circle"></i> Erreur Réseau!';
+            }
+
+            setTimeout(() => {
+                btn.classList.remove('success');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
