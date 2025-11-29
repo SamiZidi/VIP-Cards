@@ -207,13 +207,3 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-=======
->>>>>>> 252df4de9a957153fb359d1c7f7a2df570d72d2a
-__pycache__/
-*.py[cod]
-*.egg-info/
-.env
-*.log
-*.sqlite3
-.DS_Store
-venv
