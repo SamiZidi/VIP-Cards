@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masmoudi Wedding Planner</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:Georgia,serif;
+      background:#0a0a0a;
+      min-height:100vh;
+      padding:15px;
+      color:#fff;
+      position:relative;
+      overflow-x:hidden;
+    }
+    
+    /* Animated Background */
+    .bg-animation{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      z-index:0;
+      pointer-events:none;
+      background:radial-gradient(ellipse at center, rgba(212,175,55,0.15) 0%, transparent 70%);
+    }
+    .sparkle{
+      position:absolute;
+      width:3px;
+      height:3px;
+      background:linear-gradient(45deg, #d4af37, #f4e5a1);
+      border-radius:50%;
+      box-shadow:0 0 10px #d4af37, 0 0 20px #d4af37;
+      animation:sparkle 3s ease-in-out infinite;
+    }
+    @keyframes sparkle{
+      0%,100%{opacity:0;transform:scale(0)}
+      50%{opacity:1;transform:scale(1)}
+    }
+    
+    /* Floating Coins */
+    .coin{
+      position:fixed;
+      width:40px;
+      height:40px;
+      background:linear-gradient(5deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%);
+      border-radius:50%;
+      box-shadow:0 0 20px rgba(212,175,55,0.6), inset -5px -5px 10px rgba(0,0,0,0.3), inset 5px 5px 10px rgba(255,255,255,0.3);
+      animation:float-coin 6s ease-in-out infinite;
+      z-index:1;
+      opacity:0.7;
+    }
+    .coin::before{
+      content:'$';
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      font-size:20px;
+      font-weight:bold;
+      color:#0a0a0a;
+      text-shadow:0 1px 2px rgba(255,255,255,0.5);
+    }
+    @keyframes float-coin{
+      0%,100%{transform:translateY(100vh) rotate(0deg)}
+      50%{transform:translateY(-20px) rotate(180deg)}
+    }
+    
+    /* Trophy Icons */
+    .trophy{
+      position:fixed;
+      font-size:30px;
+      opacity:0.6;
+      animation:float-trophy 8s ease-in-out infinite;
+      z-index:1;
+      filter:drop-shadow(0 0 10px #d4af37);
+    }
+    @keyframes float-trophy{
+      0%,100%{transform:translateY(0) rotate(-10deg)}
+      50%{transform:translateY(-30px) rotate(10deg)}
+    }
+    
+    .container{max-width:1000px;margin:0 auto;position:relative;z-index:2}
+    
+    .logo-hero{
+      text-align:center;
+      padding-top:20px;
+      margin-bottom:10px;
+      position:relative;
+    }
+    .logo-animated{
+      width:180px;
+      height:180px;
+      margin:0 auto;
+      position:relative;
+      animation:float-logo 4s ease-in-out infinite;
+      filter:drop-shadow(0 0 50px rgba(212,175,55,0.9));
+    }
+    .logo-animated img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      animation:glow-pulse 2s ease-in-out infinite;
+    }
+    @keyframes float-logo{
+      0%,100%{transform:translateY(0) scale(1)}
+      50%{transform:translateY(-15px) scale(1.08)}
+    }
+    @keyframes glow-pulse{
+      0%,100%{filter:brightness(1.1) drop-shadow(0 0 40px rgba(212,175,55,0.9))}
+      50%{filter:brightness(1.4) drop-shadow(0 0 70px rgba(212,175,55,1))}
+    }
+
+    .countdown{
+      background:linear-gradient(135deg,rgba(212,175,55,0.2),rgba(244,229,161,0.1));
+      padding:35px 25px;
+      border:3px solid #d4af37;
+      border-radius:20px;
+      text-align:center;
+      box-shadow:0 0 50px rgba(212,175,55,0.5), inset 0 0 30px rgba(212,175,55,0.1);
+      margin-bottom:35px;
+      position:relative;
+      overflow:hidden;
+    }
+    .countdown::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:-100%;
+      width:100%;
+      height:100%;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      animation:sweep 3s linear infinite;
+    }
+    @keyframes sweep{
+      0%{left:-100%}
+      100%{left:100%}
+    }
+    .countdown-title{
+      font-size:1.5em;
+      letter-spacing:3px;
+      background:linear-gradient(135deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      margin-bottom:10px;
+      font-weight:700;
+      filter:drop-shadow(0 0 10px rgba(212,175,55,0.6));
+    }
+    .countdown-subtitle{
+      font-size:0.9em;
+      color:#f4e5a1;
+      margin-bottom:25px;
+      letter-spacing:2px;
+      text-shadow:0 0 5px rgba(212,175,55,0.5);
+    }
+    .countdown-timer{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+    .time-unit{
+      background:linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(212,175,55,0.2) 100%);
+      padding:18px 14px;
+      border-radius:12px;
+      border:3px solid #d4af37;
+      min-width:85px;
+      transition:all 0.3s;
+      box-shadow:0 0 25px rgba(212,175,55,0.3), inset 0 0 15px rgba(212,175,55,0.1);
+    }
+    .time-unit:hover{transform:translateY(-8px) scale(1.05);box-shadow:0 0 40px rgba(212,175,55,0.6)}
+    .time-number{
+      font-size:2.3em;
+      background:linear-gradient(135deg, #d4af37 0%, #f4e5a1 100%);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      font-weight:700;
+      line-height:1;
+      margin-bottom:5px;
+    }
+    .time-label{
+      font-size:0.7em;
+      letter-spacing:1.5px;
+      color:#f4e5a1;
+      text-transform:uppercase;
+      text-shadow:0 0 5px rgba(212,175,55,0.5);
+    }
+    .draw-date{
+      font-size:0.95em;
+      color:#d4af37;
+      letter-spacing:1px;
+      padding:12px 20px;
+      background:rgba(0,0,0,0.6);
+      border-radius:10px;
+      display:inline-block;
+      border:2px solid #d4af37;
+      box-shadow:0 0 20px rgba(212,175,55,0.3);
+    }
+
+    .section{
+      background:linear-gradient(135deg,rgba(212,175,55,0.08),rgba(0,0,0,0.95));
+      margin-bottom:30px;
+      padding:30px 25px;
+      border:2px solid #d4af37;
+      border-radius:20px;
+      box-shadow:0 8px 35px rgba(212,175,55,0.3);
+      transition:all 0.3s;
+      position:relative;
+      overflow:hidden;
+    }
+    .section::before{
+      content:'';
+      position:absolute;
+      top:-50%;
+      right:-50%;
+      width:100%;
+      height:100%;
+      background:radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%);
+      animation:rotate-section 15s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes rotate-section{
+      0%{transform:rotate(0deg)}
+      100%{transform:rotate(360deg)}
+    }
+    .section:hover{transform:translateY(-5px);box-shadow:0 12px 50px rgba(212,175,55,0.5);border-color:#f4e5a1}
+    .section-title{
+      font-size:1.2em;
+      letter-spacing:3px;
+      background:linear-gradient(135deg, #d4af37 0%, #f4e5a1 100%);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      margin-bottom:25px;
+      font-weight:700;
+      text-transform:uppercase;
+      position:relative;
+      padding-bottom:12px;
+      z-index:1;
+    }
+    .section-title::after{
+      content:'';
+      position:absolute;
+      bottom:0;
+      left:0;
+      width:80px;
+      height:3px;
+      background:linear-gradient(90deg, #d4af37, transparent);
+      box-shadow:0 0 10px #d4af37;
+    }
+    .field{margin-bottom:18px;position:relative;z-index:1; display: flex; justify-content: space-between;   }
+    .field-label{
+      font-size:0.75em;
+      letter-spacing:2px;
+      color:#f4e5a1;
+      margin-bottom:7px;
+      text-transform:uppercase;
+      font-weight:600;
+      text-shadow:0 0 5px rgba(212,175,55,0.3);
+    }
+    .field-value{font-size:1.15em;color:#fff;text-shadow:0 0 5px rgba(212,175,55,0.2); margin-left: auto;}
+    .divider{
+      height:2px;
+      background:linear-gradient(90deg, transparent, rgba(212,175,55,0.5), transparent);
+      margin:15px 0;
+      box-shadow:0 0 5px rgba(212,175,55,0.3);
+    }
+    
+    .rank-container{display:flex;justify-content:space-between;gap:12px;margin-bottom:25px;position:relative;z-index:1}
+    .rank-item{
+      text-align:center;
+      flex:1;
+      padding:20px 15px;
+      background:linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.7));
+      border-radius:15px;
+      border:3px solid #d4af37;
+      transition:all 0.3s;
+      min-height:85px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      box-shadow:0 0 25px rgba(212,175,55,0.3), inset 0 0 20px rgba(212,175,55,0.05);
+    }
+    .rank-item:hover{transform:scale(1.1) translateY(-5px);border-color:#f4e5a1;box-shadow:0 0 40px rgba(212,175,55,0.6)}
+    .rank-number{
+      font-size:2.2em;
+      background:linear-gradient(135deg, #d4af37 0%, #f4e5a1 100%);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      font-weight:700;
+      margin-bottom:5px;
+      filter:drop-shadow(0 0 10px rgba(212,175,55,0.5));
+    }
+    .rank-label{
+      font-size:0.7em;
+      letter-spacing:1.5px;
+      color:#f4e5a1;
+      text-transform:uppercase;
+      font-weight:600;
+      text-shadow:0 0 5px rgba(212,175,55,0.3);
+    }
+    
+    .video-frame{
+      width:100%;
+      max-width:500px;
+      aspect-ratio:9/16;
+      background:#000;
+      border:3px solid #d4af37;
+      border-radius:15px;
+      overflow:hidden;
+      box-shadow:0 8 35px rgba(212,175,55,0.5);
+      margin:0 auto 20px;
+      position:relative;
+      z-index:1;
+    }
+    .video-frame iframe{width:100%;height:100%}
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      margin-top:20px;
+      overflow:hidden;
+      border-radius:15px;
+      font-size:0.95em;
+      box-shadow:0 0 25px rgba(212,175,55,0.3);
+      position:relative;
+      z-index:1;
+    }
+    th,td{padding:12px 10px;text-align:center}
+    th{
+      background:linear-gradient(135deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%);
+      color:#0a0a0a;
+      font-weight:700;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      font-size:0.85em;
+      text-shadow:0 1px 2px rgba(255,255,255,0.3);
+    }
+    tbody tr{
+      background:rgba(212,175,55,0.08);
+      border-bottom:1px solid rgba(212,175,55,0.2);
+      transition:all 0.3s;
+    }
+    tbody tr:nth-child(1){background:rgba(212,175,55,0.25);box-shadow:0 0 15px rgba(212,175,55,0.3)}
+    tbody tr:nth-child(2){background:rgba(192,192,192,0.2);box-shadow:0 0 10px rgba(192,192,192,0.2)}
+    tbody tr:nth-child(3){background:rgba(205,127,50,0.2);box-shadow:0 0 10px rgba(205,127,50,0.2)}
+    tbody tr:hover{background:rgba(212,175,55,0.3);transform:scale(1.02);box-shadow:0 0 20px rgba(212,175,55,0.4)}
+    a{
+      color:#d4af37;
+      text-decoration:none;
+      padding:6px 15px;
+      border:2px solid #d4af37;
+      border-radius:25px;
+      display:inline-block;
+      transition:all 0.3s;
+      font-size:0.8em;
+      letter-spacing:1.5px;
+      font-weight:600;
+      box-shadow:0 0 10px rgba(212,175,55,0.3);
+    }
+    a:hover{
+      background:linear-gradient(135deg, #d4af37, #f4e5a1);
+      color:#0a0a0a;
+      transform:translateY(-3px);
+      box-shadow:0 5px 20px rgba(212,175,55,0.6);
+    }
+
+    @media(max-width:768px){
+      body{padding:12px}
+      .logo-animated{width:240px;height:240px}
+      .countdown{padding:25px 18px}
+      .countdown-title{font-size:1.2em}
+      .countdown-subtitle{font-size:0.8em}
+      .countdown-timer{gap:10px}
+      .time-unit{padding:14px 12px;min-width:75px}
+      .time-number{font-size:1.9em}
+      .time-label{font-size:0.65em}
+      .section{padding:22px 18px}
+      .section-title{font-size:0.8em}
+      .field-label{font-size:0.7em}
+      .field-value{font-size:1.05em}
+      .rank-item{padding:15px 12px;min-height:75px}
+      .rank-number{font-size:1.8em}
+      .rank-label{font-size:0.65em}
+      table{font-size:0.85em}
+      th,td{padding:10px 7px;font-size:0.8em}
+      a{padding:5px 12px;font-size:0.75em}
+      .coin{width:30px;height:30px}
+      .coin::before{font-size:16px}
+      .trophy{font-size:24px}
+    }
+
+    @media(max-width:480px){
+      body{padding:10px}
+      .logo-animated{width:170px;height:170px}
+      .countdown{padding:18px 15px}
+      .countdown-title{font-size:0.9em}
+      .countdown-subtitle{font-size:0.75em}
+      .time-unit{padding:10px 1px;min-width:65px}
+      .time-number{font-size:1.1em}
+      .time-label{font-size:0.6em}
+      .section{padding:18px 15px}
+      .rank-item{padding:1px 1px;min-height:60px; letter-spacing: 0px; font-size: 0.55em;}
+      .rank-number{font-size:2.5em}
+      table{font-size:0.8em}
+      th,td{padding:8px 5px}
+      .coin{width:25px;height:25px}
+      .coin::before{font-size:14px}
+      .trophy{font-size:20px}
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Animation -->
+  <div class="bg-animation" id="bgAnimation"></div>
+
+  <div class="container">
+    <!-- Logo Hero Section -->
+    <div class="logo-hero">
+      <div class="logo-animated">
+        <img src="{{ url_for('static', filename='mwp_logo.png') }}" alt="Masmoudi Logo">
+      </div>
+    </div>
+
+    <!-- Countdown -->
+    <div class="countdown">
+      <div class="countdown-title">COMPETITION MASMOUDI VIP</div>
+      <div class="countdown-subtitle">Temps Restant Avant Le Fin de Competition</div>
+      <div class="countdown-timer">
+        <div class="time-unit">
+          <div class="time-number" id="days">--</div>
+          <div class="time-label">Jours</div>
+        </div>
+        <div class="time-unit">
+          <div class="time-number" id="hours">--</div>
+          <div class="time-label">Heures</div>
+        </div>
+        <div class="time-unit">
+          <div class="time-number" id="minutes">--</div>
+          <div class="time-label">Minutes</div>
+        </div>
+        <div class="time-unit">
+          <div class="time-number" id="seconds">--</div>
+          <div class="time-label">Secondes</div>
+        </div>
+      </div>
+      <div class="draw-date">Date du Tirage: <span id="drawDateText">--</span></div>
+    </div>
+
+    <!-- Participant Info -->
+    <div class="section">
+      <div class="section-title">INFORMATIONS PARTICIPANT</div>
+      <div class="field">
+        <span class="field-label" >Nom Complet</span>
+        <span class="field-value">{{ user.full_name }}</span>
+      </div>
+      <div class="divider"></div>
+      <div class="field">
+        <div class="field-label">Telephone</div>
+        <div class="field-value">{{ user.phone_number }}</div>
+      </div>
+      <div class="divider"></div>
+      <div class="field">
+        <div class="field-label">Date d'Evenement</div>
+        <div class="field-value">{{ user.date_wedding }}</div>
+      </div>
+      <div class="divider"></div>
+      <div class="field">
+        <div class="field-label">Lieu</div>
+        <div class="field-value">{{ user.lieu_wedding }}</div>
+      </div>
+    </div>
+
+    <!-- Video & Stats -->
+    <div class="section">
+      <div class="section-title">VOTRE VIDEO DE PARTICIPATION</div>
+      <div class="rank-container">
+        <div class="rank-item">
+          <div class="rank-number">#{{user.rank}}</div>
+          <div class="rank-label">Classement</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-number">{{ user.likes_number }}</div>
+          <div class="rank-label">Likes</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-number">{{ competition.users|length if user.competitions else 0 }}</div>
+          <div class="rank-label">Participants</div>
+        </div>
+      </div>
+
+      <div class="video-frame">
+        <iframe src="https://www.facebook.com/plugins/video.php?href={{ user.url }}&show_text=true" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+      </div>
+      <p style="text-align:center;color:#f4e5a1;font-size:0.95em;margin-top:18px">
+        {% if user.url %}
+          <a href="{{ user.url }}" target="_blank">Voir la video</a>
+        {% else %}
+          <span style="color:#ff6b6b">Video non disponible</span>
+        {% endif %}
+      </p>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="section">
+      <div class="section-title">CLASSEMENT TOP 10</div>
+      <table id="top10Table">
+        <thead>
+          <tr>
+            <th>Rang</th>
+            <th>Nom</th>
+            <th>Likes</th>
+            <th>Vues</th>
+            <th>Video</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Background Sparkles
+    function createSparkles(){
+      const bg=document.getElementById('bgAnimation');
+      for(let i=0;i<50;i++){
+        const sparkle=document.createElement('div');
+        sparkle.className='sparkle';
+        sparkle.style.left=Math.random()*100+'%';
+        sparkle.style.top=Math.random()*100+'%';
+        sparkle.style.animationDelay=Math.random()*3+'s';
+        bg.appendChild(sparkle);
+      }
+    }
+
+    // Floating Coins
+    function createCoins(){
+      for(let i=0;i<8;i++){
+        const coin=document.createElement('div');
+        coin.className='coin';
+        coin.style.left=Math.random()*90+'%';
+        coin.style.animationDelay=Math.random()*6+'s';
+        coin.style.animationDuration=(6+Math.random()*4)+'s';
+        document.body.appendChild(coin);
+      }
+    }
+
+    // Trophy Icons
+    function createTrophies(){
+      const trophies=['🏆','✨','✨','⭐'];
+      for(let i=0;i<6;i++){
+        const trophy=document.createElement('div');
+        trophy.className='trophy';
+        trophy.textContent=trophies[Math.floor(Math.random()*trophies.length)];
+        trophy.style.left=Math.random()*90+'%';
+        trophy.style.top=Math.random()*80+'%';
+        trophy.style.animationDelay=Math.random()*8+'s';
+        trophy.style.animationDuration=(8+Math.random()*4)+'s';
+        document.body.appendChild(trophy);
+      }
+    }
+
+    function updateCountdown(){
+      const drawDate=new Date("{{ competition.end_date }}");
+      drawDate.setHours(0,0,0,0);
+      const options={weekday:'long',year:'numeric',month:'long',day:'numeric'};
+      document.getElementById('drawDateText').textContent=drawDate.toLocaleDateString('fr-FR',options);
+      function update(){
+        const now=new Date().getTime();
+        const distance=drawDate-now;
+        if(distance<0){
+          document.getElementById('days').textContent='00';
+          document.getElementById('hours').textContent='00';
+          document.getElementById('minutes').textContent='00';
+          document.getElementById('seconds').textContent='00';
+          return;
+        }
+        const days=Math.floor(distance/(1000*60*60*24));
+        const hours=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
+        const minutes=Math.floor((distance%(1000*60*60))/(1000*60));
+        const seconds=Math.floor((distance%(1000*60))/1000);
+        document.getElementById('days').textContent=String(days).padStart(2,'0');
+        document.getElementById('hours').textContent=String(hours).padStart(2,'0');
+        document.getElementById('minutes').textContent=String(minutes).padStart(2,'0');
+        document.getElementById('seconds').textContent=String(seconds).padStart(2,'0');
+      }
+      update();
+      setInterval(update,1000);
+    }
+
+    {% set participants=competition.users %}
+    {% set sorted_users=participants|sort(attribute='likes_number',reverse=true) %}
+    {% set top10=sorted_users[:10] %}
+    const top10=[
+      {% for u in top10 %}
+      {rank:{{loop.index}},name:"{{u.full_name}}",likes:{{u.likes_number}},views:{{u.views_number}},url:"{{u.url}}"}{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ];
+
+    function populateTop10(){
+      const tbody=document.querySelector("#top10Table tbody");
+      const medal=['🥇#','🥈#','🥉#'];
+      top10.forEach((item,idx)=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=`
+          <td>${medal[idx]||''} ${item.rank}</td>
+          <td>${item.name}</td>
+          <td>${item.likes}</td>
+          <td>${item.views}</td>
+          <td><a href="${item.url}" target="_blank">Voir</a></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.addEventListener('load',()=>{
+      createSparkles();
+      createCoins();
+      createTrophies();
+      updateCountdown();
+      populateTop10();
+    });
+  </script>
+</body>
+</html>

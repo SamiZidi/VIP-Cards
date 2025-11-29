@@ -1,0 +1,22 @@
+
+services:
+  app:
+    container_name: vip_app
+    restart: unless-stopped
+    build: .
+    networks:
+      - app_network
+    ports:
+      - "8000:8000"
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared_tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token eyJhIjoiNGI3ZDMwZjhlZjY3MDdjMWM5NzExZDQ5ZDQxMmFhOGUiLCJ0IjoiNTZmYTk5OWMtZTU2My00Y2ZmLWJlY2ItYzI5YzI2OWI2ZDVlIiwicyI6Ik9HRTJPVEEwWW1RdE16SmlZUzAwTkRsaExXSXlZalF0T0dNelptWmtZVFkyWmpKaSJ9
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge

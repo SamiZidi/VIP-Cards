@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord Admin - Masmoudi Wedding Planner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #eeeeee;
+            font-size: 12px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #131001 0%, #725305 100%);
+            color: #333;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-placeholder {
+            width: 50px;
+            height: 50px;
+        }
+
+        .header h3 {
+            color: #c3e6cb;
+            font-size: 18px;
+        }
+        
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.3);
+            color: #afb08c;
+            border: 1px solid #33333322;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: #333;
+            color: #FFD700;
+        }
+
+        .btn-comp {
+            background: rgba(255, 255, 255, 0.3);
+            color: #ffcb0f;
+            border: 1px solid #33333322;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .btn-comp:hover {
+            background: #333;
+            color: #FFD700;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .tab {
+            padding: 8px 12px;
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 12px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        .tab.active {
+            color: #DAA520;
+            border-bottom-color: #DAA520;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .scanner-section, .users-list, .user-form {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+
+        .user-form {
+            display: none;
+        }
+        
+        .user-form.show {
+            display: block;
+        }
+        
+        #qr-reader {
+            max-width: 100%;
+            margin: 10px auto;
+        }
+        
+        .btn-primary, .btn-secondary {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
+            color: #333;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 10px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 12px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #DAA520;
+        }
+        
+        /* Filter Section Styles */
+        .filter-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-toggle-btn {
+            background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
+            color: #333;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+        }
+
+        .filter-toggle-btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        .filter-toggle-btn i {
+            transition: transform 0.3s;
+        }
+
+        .filter-toggle-btn.active i {
+            transform: rotate(180deg);
+        }
+
+        .filter-inputs {
+            display: none;
+            flex: 1;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-inputs.show {
+            display: flex;
+        }
+
+        .filter-inputs input,
+        .filter-inputs select {
+            flex: 1;
+            min-width: 130px;
+            padding: 6px 10px;
+            font-size: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+
+        .date-filter {
+            position: relative;
+            display: flex;
+            align-items: center;
+            flex: 1;
+            min-width: 130px;
+        }
+        
+        .date-filter input {
+            width: 100%;
+            padding-left: 28px;
+        }
+        
+        .date-filter .icon {
+            position: absolute;
+            left: 8px;
+            color: #999;
+            pointer-events: none;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-actions button {
+            padding: 8px 12px;
+            white-space: nowrap;
+        }
+        
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+        
+        .users-table th,
+        .users-table td {
+            padding: 6px 8px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+            white-space: nowrap;
+        }
+
+        .action-icon-group {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .action-icon.edit {
+            color: #4CAF50;
+        }
+        
+        .action-icon.delete {
+            color: #f44336;
+        }
+
+        .status-badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .user-type-badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .type-gold {
+            background: #FFD700;
+            color: #333;
+            border: 1px solid #DAA520;
+        }
+        
+        .type-platinum {
+            background: #E5E4E2;
+            color: #333;
+            border: 1px solid #A9A9A9;
+        }
+
+        .alert {
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            border: 1px solid transparent;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+
+        .checkbox-group-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #DAA520;
+        }
+        
+        input:focus + .slider {
+            box-shadow: 0 0 1px #DAA520;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        
+        .checkbox-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 12px;
+            user-select: none;
+        }
+        
+        .form-group.checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0;
+        }
+        
+        .form-group.checkbox-group label {
+            margin: 0;
+        }
+
+        @media (max-width: 600px) {
+            #qr-reader > div:first-child {
+                max-width: 90vw !important;
+            }
+
+            .filter-inputs {
+                width: 100%;
+            }
+
+            .filter-inputs input,
+            .filter-inputs select,
+            .date-filter {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title-group">
+            <img src="{{ url_for('static', filename='mwp_logo.png') }}" alt="Logo" class="logo-placeholder">
+            <h3>VIP Wedding Planner</h3>
+        </div>
+        <div>
+         <button class="btn-comp" onclick="window.location.href='/admin/competitions'">
+            <i class="fas fa-trophy"></i>
+        </button>
+        <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab(event, 'scanner')">Scanner QR</button>
+            <button class="tab" onclick="showTab(event, 'users')">Tous les Clients</button>
+        </div>
+        
+        <div class="tab-content active" id="scanner-tab">
+            <div class="scanner-section">
+                <h2 style="margin-bottom: 10px; font-size: 16px;">Scanner le Code QR</h2>
+                <p style="color: #666; margin-bottom: 10px; font-size: 12px;">Cliquez sur "Démarrer le Scanner" et maintenez le code QR stable devant la caméra.</p>
+                <div id="qr-reader"></div>
+                <div style="text-align: center; margin-top: 10px; display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap;">
+                    <button class="btn-primary" id="startScanBtn" onclick="startScanner()">Démarrer le Scanner</button>
+                    <button class="btn-secondary" id="stopScanBtn" onclick="stopScanner()" style="display: none;">Arrêter le Scanner</button>
+
+                    <div style="display:flex; gap:6px; align-items:center;">
+                        <input id="manualNumber" type="text" placeholder="Numéro (ex: 501)" style="padding:6px; border-radius:4px; border:1px solid #e0e0e0; width:140px; font-size:12px;">
+                        <button class="btn-secondary" onclick="checkAndCreateUser()">Créer ID</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="user-form" id="userForm">
+                <h2 style="margin-bottom: 10px; font-size: 16px;">Détails du Client</h2>
+                <div id="alertContainer"></div>
+                
+                <form id="saveUserForm">
+                    <input type="hidden" id="userId" name="user_id">
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>ID Code QR *</label>
+                            <input type="text" id="idQrCode" name="id_qr_code" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Nom Complet</label>
+                            <input type="text" id="fullName" name="full_name">
+                        </div>
+                        <div class="form-group">
+                            <label>Numéro de Téléphone</label>
+                            <input type="tel" id="phoneNumber" name="phone_number">
+                        </div>
+                        <div class="form-group">
+                            <label>Date du Mariage</label>
+                            <input type="date" id="dateWedding" name="date_wedding">
+                        </div>
+                        <div class="form-group">
+                            <label>Lieu du Mariage</label>
+                            <input type="text" id="lieuWedding" name="lieu_wedding">
+                        </div>
+                        <div class="form-group" id="url-form-group" style="display: none;">
+                            <label>Lien URL (Vidéo)</label>
+                            <input type="url" id="url" name="url">
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Montant Total (DT)</label>
+                            <input type="number" step="0.01" id="soldeToPay" name="solde_to_pay">
+                        </div>
+                        <div class="form-group">
+                            <label>Avance Payée (DT)</label>
+                            <input type="number" step="0.01" id="avancePaid" name="avance_paid">
+                        </div>
+                        <div class="form-group">
+                            <label>Réduction (DT)</label>
+                            <input type="number" step="0.01" id="reduction" name="reduction">
+                        </div>
+                        <div class="form-group">
+                            <label>Points</label>
+                            <input type="number" id="pnts" name="pnts">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Musique SLOW</label>
+                        <textarea id="slowMusic" name="slow_music"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Musique d'Entrée</label>
+                        <textarea id="inMusic" name="in_music"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Musique Spéciale</label>
+                        <textarea id="specialMusic" name="special_music"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="note" name="note" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div class="form-group checkbox-group">
+                            <label class="switch">
+                                <input type="checkbox" id="isGold" name="is_gold">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="checkbox-label" onclick="document.getElementById('isGold').click();">Client Gold</span>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="switch">
+                                <input type="checkbox" id="isActive" name="is_active">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="checkbox-label" onclick="document.getElementById('isActive').click();">Actif</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="hideUserForm()">Annuler</button>
+                        <button type="submit" class="btn-primary">Enregistrer le Client</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="users-tab">
+            <div class="users-list">
+               
+                
+                <div class="filter-section">
+                     <h2 style="margin-bottom: 10px; font-size: 16px;">Tous les Clients</h2>
+                    <button class="filter-toggle-btn" onclick="toggleFilters()">
+                        <i class="fas fa-filter"></i>
+                        <span>Filtres</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+
+                    <div class="filter-inputs" id="filterInputs">
+                        <input type="text" id="searchName" placeholder="Recherche par nom...">
+                        <input type="text" id="searchQrCode" placeholder="Recherche par Code QR...">
+                        
+                        <div class="date-filter">
+                            <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                            <input type="text" id="searchDate" placeholder="Date..." 
+                                   onfocus="this.type='date'" 
+                                   onblur="this.value ? this.type='date' : this.type='text'">
+                        </div>
+
+                        <select id="filterType">
+                            <option value="tous">Tout Type</option>
+                            <option value="gold">Gold</option>
+                            <option value="platinum">Platinum</option>
+                        </select>
+
+                        <select id="filterStatus">
+                            <option value="tous">Tout Statut</option>
+                            <option value="actif">Actif</option>
+                            <option value="inactif">Inactif</option>
+                        </select>
+
+                        <div class="filter-actions">
+                            <button class="btn-primary" onclick="searchUsers()">Filtrer</button>
+                            <button class="btn-secondary" onclick="clearSearch()">Effacer</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Code QR</th>
+                                <th>Nom</th>
+                                <th>Téléphone</th>
+                                <th>Date Mariage</th>
+                                <th>Lieu</th>
+                                <th>Total</th>
+                                <th>Payé</th>
+                                <th>Reduction</th>
+                                <th>Statut</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let html5QrcodeScanner = null;
+        let allUsers = []; 
+        
+        const getUserType = (is_gold) => is_gold ? 'Gold' : 'Platinum';
+        
+        const getUserTypeClass = (type) => {
+            const typeMap = { 'Gold': 'type-gold', 'Platinum': 'type-platinum' };
+            return typeMap[type] || '';
+        };
+
+        function toggleFilters() {
+            const filterInputs = document.getElementById('filterInputs');
+            const toggleBtn = document.querySelector('.filter-toggle-btn');
+            
+            filterInputs.classList.toggle('show');
+            toggleBtn.classList.toggle('active');
+        }
+
+        function showTab(event, tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            if (tabName === 'users') {
+                loadUsers();
+                if (html5QrcodeScanner?.getState() === 2) stopScanner();
+            }
+        }
+        
+        function startScanner() {
+            hideUserForm();
+
+            if (!html5QrcodeScanner) {
+                html5QrcodeScanner = new Html5Qrcode("qr-reader");
+            }
+            
+            const config = {
+                fps: 10,
+                qrbox: { width: 200, height: 200 },
+                aspectRatio: 1.0,
+                disableFlip: false
+            };
+            
+            html5QrcodeScanner.start(
+                { facingMode: "environment" },
+                config,
+                onScanSuccess,
+                onScanError
+            ).catch(err => {
+                console.error("Impossible de démarrer le scan", err);
+                showAlert("Accès à la caméra refusé ou non disponible", "error");
+                toggleScanButtons(true);
+            });
+            
+            toggleScanButtons(false);
+        }
+        
+        function stopScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.stop()
+                    .then(() => html5QrcodeScanner.clear())
+                    .catch(err => console.error("Erreur lors de l'arrêt du scanner:", err));
+            }
+            toggleScanButtons(true);
+        }
+
+        function toggleScanButtons(showStart) {
+            document.getElementById('startScanBtn').style.display = showStart ? 'inline-block' : 'none';
+            document.getElementById('stopScanBtn').style.display = showStart ? 'none' : 'inline-block';
+        }
+        
+        function onScanSuccess(decodedText) {
+            console.log('Code QR détecté:', decodedText);
+            showAlert('Code QR scanné avec succès!', 'success');
+            stopScanner();
+            
+            const qrCodeId = extractQrCodeId(decodedText);
+            
+            if (qrCodeId) {
+                console.log('ID Code QR extrait:', qrCodeId);
+                loadUserByQrCode(qrCodeId);
+            } else {
+                showAlert('Impossible d\'extraire l\'ID du code QR : ' + decodedText, 'error');
+            }
+        }
+
+    function extractQrCodeId(decodedText) {
+    // Pattern for the new URL structure with embedded user_id
+    // Matches: AbX9TqVrKmN{USER_ID}4FjHsW2GyUeRc
+    const urlPattern = /AbX9TqVrKmN([A-Z0-9-_]+?)4FjHsW2GyUeRc/i;
+    const match = decodedText.match(urlPattern);
+    
+    if (match && match[1]) {
+        console.log('Extracted ID from pattern:', match[1]);
+        return match[1];
+    }
+    
+    // Fallback: Handle URLs with slashes (old format)
+    if (decodedText.includes('/')) {
+        const parts = decodedText.split('/').filter(Boolean);
+        const lastPart = parts[parts.length - 1];
+        console.log('Extracted ID from URL path:', lastPart);
+        return lastPart;
+    }
+    
+    console.log('Using raw decoded text as ID:', decodedText.trim());
+    return decodedText.trim();
+}
+    
+    function onScanError(errorMessage) {
+            if (errorMessage && !errorMessage.includes("NotFound")) {
+                console.warn("Erreur de scan:", errorMessage);
+            }
+        }
+        
+        function loadUserByQrCode(qrCodeId) {
+            fetch('/api/user/' + qrCodeId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        populateUserForm(data.user);
+                        showAlert(data.user.id ? 'Client trouvé!' : 'Nouveau client - Veuillez remplir les détails', 'success');
+                    } else {
+                        showAlert('Erreur de chargement du client: ' + (data.error || 'Erreur inconnue'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur Fetch:', error);
+                    showAlert('Erreur de connexion au serveur', 'error');
+                });
+        }
+        
+        function populateUserForm(user) {
+            const fields = {
+                userId: user.id || '',
+                idQrCode: user.id_qr_code,
+                fullName: user.full_name || '',
+                phoneNumber: user.phone_number || '',
+                dateWedding: user.date_wedding || '',
+                lieuWedding: user.lieu_wedding || '',
+                url: user.url || '',
+                soldeToPay: user.solde_to_pay || 0,
+                avancePaid: user.avance_paid || 0,
+                reduction: user.reduction || 0,
+                slowMusic: user.slow_music || '',
+                inMusic: user.in_music || '',
+                specialMusic: user.special_music || '',
+                pnts: user.pnts || 0,
+                note: user.note || ''
+            };
+
+            Object.entries(fields).forEach(([key, value]) => {
+                const element = document.getElementById(key);
+                if (element) element.value = value;
+            });
+            
+            document.getElementById('isGold').checked = user.is_gold;
+            document.getElementById('isActive').checked = user.id ? user.is_active : true;
+            
+            toggleUrlField(user.is_gold);
+            
+            document.getElementById('isGold').onchange = function() {
+                toggleUrlField(this.checked);
+            };
+
+            document.getElementById('userForm').classList.add('show');
+        }
+
+        function toggleUrlField(show) {
+            const urlFormGroup = document.getElementById('url-form-group');
+            urlFormGroup.style.display = show ? 'block' : 'none';
+            if (!show) document.getElementById('url').value = '';
+        }
+        
+        function loadUsers() {
+            fetch('/api/users')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        allUsers = data.users || [];
+                        displayUsers(allUsers);
+                    } else {
+                        alert('Erreur de chargement des clients.');
+                    }
+                })
+                .catch(error => console.error('Erreur de chargement des clients:', error));
+        }
+        
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding: 10px;">Aucun client trouvé.</td></tr>';
+                return;
+            }
+
+            users.forEach(user => {
+                const userType = getUserType(user.is_gold);
+                const typeBadgeClass = getUserTypeClass(userType);
+
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${user.id_qr_code}</td>
+                    <td>${user.full_name || '-'}</td>
+                    <td>${user.phone_number || '-'}</td>
+                    <td>${user.date_wedding || '-'}</td>
+                    <td>${user.lieu_wedding || '-'}</td>
+                    <td>${(Number(user.solde_to_pay) || 0).toFixed(2)} DT</td>
+                    <td>${(Number(user.avance_paid) || 0).toFixed(2)} DT</td>
+                    <td>${(Number(user.reduction )|| 0).toFixed(2)} DT</td>
+                    <td><span class="status-badge ${user.is_active ? 'status-active' : 'status-inactive'}">${user.is_active ? 'Actif' : 'Inactif'}</span></td>
+                    <td><span class="user-type-badge ${typeBadgeClass}">${userType}</span></td>
+                    <td>
+                        <div class="action-icon-group">
+                            <button class="action-icon edit" title="Modifier" onclick="editUser('${user.id_qr_code}')"><i class="fas fa-edit"></i></button>
+                            <button class="action-icon delete" title="Supprimer" onclick="deleteUser(${user.id})"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+        
+        function searchUsers() {
+            const filters = {
+                name: document.getElementById('searchName').value.toLowerCase(),
+                qrCode: document.getElementById('searchQrCode').value.toLowerCase(),
+                date: document.getElementById('searchDate').value,
+                type: document.getElementById('filterType').value,
+                status: document.getElementById('filterStatus').value
+            };
+            
+            const filtered = allUsers.filter(user => {
+                const nameMatch = !filters.name || (user.full_name?.toLowerCase().includes(filters.name));
+                const qrMatch = !filters.qrCode || (user.id_qr_code?.toLowerCase().includes(filters.qrCode));
+                const dateMatch = !filters.date || user.date_wedding === filters.date;
+
+                const userType = getUserType(user.is_gold).toLowerCase();
+                const typeMatch = filters.type === 'tous' || userType === filters.type;
+                
+                const statusMatch = filters.status === 'tous' ||
+                                  (filters.status === 'actif' && user.is_active) ||
+                                  (filters.status === 'inactif' && !user.is_active);
+                
+                return nameMatch && qrMatch && dateMatch && typeMatch && statusMatch;
+            });
+            
+            displayUsers(filtered);
+        }
+        
+        function clearSearch() {
+            const searchDate = document.getElementById('searchDate');
+            document.getElementById('searchName').value = '';
+            document.getElementById('searchQrCode').value = '';
+            searchDate.value = '';
+            searchDate.type = 'text';
+            document.getElementById('filterType').value = 'tous';
+            document.getElementById('filterStatus').value = 'tous';
+            displayUsers(allUsers);
+        }
+        
+        function editUser(qrCodeId) {
+            document.querySelector('.tab:first-child').click(); 
+            loadUserByQrCode(qrCodeId);
+        }
+        
+        function deleteUser(userId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce client ?')) return;
+
+            fetch('/api/user/delete/' + userId, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        showAlert('Client supprimé avec succès!', 'success');
+                        loadUsers(); 
+                    } else {
+                        showAlert('Erreur lors de la suppression du client: ' + (result.error || 'Erreur inconnue'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur Fetch:', error);
+                    showAlert('Erreur de connexion au serveur', 'error');
+                });
+        }
+        
+        function hideUserForm() {
+            document.getElementById('userForm').classList.remove('show');
+            document.getElementById('saveUserForm').reset();
+            document.getElementById('alertContainer').innerHTML = '';
+            document.getElementById('url-form-group').style.display = 'none';
+        }
+        
+        function addUserManually() {
+            stopScanner();
+            // Generate a new QR code ID
+            const newQrCodeId = 'USER-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+            
+            // Populate form with new QR code
+            document.getElementById('userId').value = '';
+            document.getElementById('idQrCode').value = newQrCodeId;
+            document.getElementById('fullName').value = '';
+            document.getElementById('phoneNumber').value = '';
+            document.getElementById('dateWedding').value = '';
+            document.getElementById('lieuWedding').value = '';
+            document.getElementById('url').value = '';
+            document.getElementById('soldeToPay').value = '';
+            document.getElementById('avancePaid').value = '';
+            document.getElementById('reduction').value = '';
+            document.getElementById('pnts').value = '';
+            document.getElementById('slowMusic').value = '';
+            document.getElementById('inMusic').value = '';
+            document.getElementById('specialMusic').value = '';
+            document.getElementById('note').value = '';
+            document.getElementById('isGold').checked = true;
+            document.getElementById('isActive').checked = false;
+            document.getElementById('alertContainer').innerHTML = '';
+            
+            toggleUrlField(true);
+            document.getElementById('userForm').classList.add('show');
+        }
+
+        function checkAndCreateUser() {
+            stopScanner();
+            const numField = document.getElementById('manualNumber');
+            const raw = (numField && numField.value) ? numField.value.trim() : '';
+
+            if (!raw) {
+                showAlert('Veuillez entrer un numéro de client.', 'error');
+                return;
+            }
+
+            // Keep only digits
+            const digits = raw.replace(/\D/g, '');
+            if (!digits) {
+                showAlert('Le numéro doit contenir des chiffres (ex: 501).', 'error');
+                return;
+            }
+
+            const qrId = 'USER' + digits;
+
+            // Check existence via API
+            fetch('/api/user/' + qrId)
+                .then(resp => resp.json())
+                .then(data => {
+                    if (!data || !data.success) {
+                        showAlert('Erreur lors de la vérification du client.', 'error');
+                        return;
+                    }
+
+                    // If user exists (id is present), do not open fields
+                    if (data.user && data.user.id) {
+                        showAlert('Ce client existe déjà : ' + qrId, 'error');
+                        return;
+                    }
+
+                    // Not existing: open form with all fields editable and prefilled id
+                    document.getElementById('userId').value = '';
+                    document.getElementById('idQrCode').value = qrId;
+                    document.getElementById('fullName').value = '';
+                    document.getElementById('phoneNumber').value = '';
+                    document.getElementById('dateWedding').value = '';
+                    document.getElementById('lieuWedding').value = '';
+                    document.getElementById('url').value = '';
+                    document.getElementById('soldeToPay').value = '';
+                    document.getElementById('avancePaid').value = '';
+                    document.getElementById('reduction').value = '';
+                    document.getElementById('pnts').value = '';
+                    document.getElementById('slowMusic').value = '';
+                    document.getElementById('inMusic').value = '';
+                    document.getElementById('specialMusic').value = '';
+                    document.getElementById('note').value = '';
+                    document.getElementById('isGold').checked = true;
+                    document.getElementById('isActive').checked = false;
+                    document.getElementById('alertContainer').innerHTML = '';
+
+                    toggleUrlField(true);
+                    document.getElementById('userForm').classList.add('show');
+                })
+                .catch(err => {
+                    console.error('Erreur Fetch:', err);
+                    showAlert('Erreur de connexion au serveur', 'error');
+                });
+        }
+        
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `<div class="alert alert-${type === 'error' ? 'error' : 'success'}">${message}</div>`;
+            
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+        
+        function logout() {
+            window.location.href = '/logout';
+        }
+
+        document.getElementById('saveUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                user_id: formData.get('user_id') || null,
+                id_qr_code: formData.get('id_qr_code'),
+                full_name: formData.get('full_name'),
+                phone_number: formData.get('phone_number'),
+                date_wedding: formData.get('date_wedding'),
+                lieu_wedding: formData.get('lieu_wedding'),
+                url: formData.get('url'),
+                solde_to_pay: parseFloat(formData.get('solde_to_pay')) || 0,
+                avance_paid: parseFloat(formData.get('avance_paid')) || 0,
+                reduction: parseFloat(formData.get('reduction')) || 0,
+                slow_music: formData.get('slow_music'),
+                in_music: formData.get('in_music'),
+                special_music: formData.get('special_music'),
+                pnts: parseInt(formData.get('pnts')) || 0,
+                note: formData.get('note'),
+                is_gold: document.getElementById('isGold').checked,
+                is_active: document.getElementById('isActive').checked
+            };
+
+            fetch('/api/user/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showAlert('Client enregistré avec succès!', 'success');
+                    setTimeout(hideUserForm, 2000);
+                } else {
+                    showAlert('Erreur lors de l\'enregistrement: ' + (result.error || 'Erreur inconnue'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur Fetch:', error);
+                showAlert('Erreur de connexion au serveur', 'error');
+            });
+        });
+    </script>
+</body>
+</html>

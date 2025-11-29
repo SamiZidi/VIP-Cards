@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masmoudi Wedding Planner - Résultat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CORE STYLES --- */
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f9eac6;
+            --gold-dim: rgba(212, 175, 55, 0.3);
+            --cream: #f0e5d8;
+            --dark-bg: #1a1a1a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- ANIMATIONS (Floating Background) --- */
+        .floating-elements { position: fixed; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 0; }
+        .floating-element { position: absolute; opacity: 0.08; animation: float 25s infinite ease-in-out; }
+        .element-1 { top: 15%; left: 10%; width: 350px; height: 350px; background: radial-gradient(circle, var(--gold) 0%, transparent 70%); }
+        .element-2 { top: 50%; right: 15%; width: 250px; height: 250px; background: radial-gradient(circle, var(--cream) 0%, transparent 70%); animation-delay: 7s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -40px) scale(1.15); }
+            66% { transform: translate(-25px, 30px) scale(0.9); }
+        }
+
+        /* --- WINNER ANIMATION (Canvas) --- */
+        #confetti-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;
+        }
+
+        /* --- LAYOUT --- */
+        .container {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- HEADER --- */
+        .logo-container { margin-bottom: 40px; animation: fadeInDown 1s ease-out; }
+        .logo-text { font-size: 3.5em; font-weight: 300; letter-spacing: 8px; color: var(--gold); text-transform: uppercase; text-shadow: 0 0 30px var(--gold-dim); }
+        .tagline { font-size: 1.1em; letter-spacing: 5px; color: var(--cream); opacity: 0.85; text-transform: uppercase; }
+
+        /* --- HERO & MESSAGES --- */
+        .hero-section { margin-bottom: 50px; animation: fadeInUp 1.2s ease-out; }
+        
+        h1.hero-title { font-size: 3em; font-weight: 300; margin-bottom: 15px; color: #fff; }
+        .highlight-gold { color: var(--gold); font-style: italic; }
+        
+        .message-box {
+            font-size: 1.4em;
+            color: var(--cream);
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
+        .rank-badge {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            font-size: 0.9em;
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* --- CARDS --- */
+        .content-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 40px;
+            border-radius: 4px;
+            width: 100%;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .card-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 30px; }
+        .card-title { font-size: 1.8em; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; padding-bottom: 10px; border-bottom: 1px solid var(--gold-dim); }
+
+        .detail-row { margin-bottom: 25px; }
+        .detail-label { font-size: 0.9em; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; margin-bottom: 5px; padding-top: 20px; }
+        .detail-value { font-size: 1.5em; color: #fff; }
+
+        /* --- POINTS DE FIDELITÉ --- */
+        .points-display {
+            margin-top: 30px;
+            padding: 20px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            border: 1px solid var(--gold-dim);
+        }
+        .points-number {
+            padding-top: 10px;
+            font-size: 2em;
+            font-weight: 600;
+            color: var(--gold);
+            text-shadow: 0 0 15px var(--gold-dim);
+            line-height: 1;
+        }
+
+        /* --- BUTTONS --- */
+        .btn-gold {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #d4af37 0%, #b59022 100%);
+            color: #1a1a1a;
+            text-decoration: none;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            margin-top: 20px;
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .btn-gold:hover { transform: translateY(-3px); color: #000; }
+
+        /* --- VIDEO --- */
+        .video-frame { width: 100%; aspect-ratio: 9/16; background: #000; border: 1px solid var(--gold); margin: 0 auto; max-width: 400px;}
+        iframe { width: 100%; height: 100%; }
+
+        /* --- ANIMATIONS KEYFRAMES --- */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- MOBILE --- */
+        @media (max-width: 768px) {
+            .logo-text { font-size: 2.5em; }
+            h1.hero-title { font-size: 1.3em; }
+            .content-card { padding: 25px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+    <div class="floating-elements">
+        <div class="floating-element element-1"></div>
+        <div class="floating-element element-2"></div>
+    </div>
+
+    <div class="container">
+        <img src="{{ url_for('static', filename='mwp_logo.png') }}" alt="Logo" style="width:90px; height:90px;">
+        <div class="logo-container">
+            <div class="logo-text">Masmoudi</div>
+            <div class="tagline">Wedding Planner</div>
+        </div>
+         {% if user.points > 0 %}
+             <div style="padding-bottom:10px; padding-top: 0px;">
+               
+                <div class="points-number" style="font-family: Arial, Helvetica, sans-serif;">{{ user.points }}</div>
+                <div style="font-size:0.8em; color:var(--cream); opacity:0.6;">Points accumulés</div>
+            </div>
+            {% endif %}
+        <div class="">
+           
+
+                <div class="detail-value" style="padding-bottom: 0%;">{{ user.full_name }}</div>
+            </div>
+           
+               
+            <div class="detail-row">
+                <div class="detail-label">Date du Mariage</div>
+                <div class="detail-value">{{ user.date_wedding }}</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Lieu</div>
+                <div class="detail-value">{{ user.lieu_wedding }}</div>
+            </div>
+
+        
+
+       
+
+        {% if user.is_gold %}
+        <div class="content-card">
+            <div class="card-header">
+                <div class="card-title">Souvenir Vidéo</div>
+            </div>
+            <div class="video-frame">
+                <iframe
+                    src="https://www.facebook.com/plugins/video.php?href={{ user.url }}&show_text=false&width=500"
+                    scrolling="no"
+                    frameborder="0"
+                    allowfullscreen="true"
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="hero-section">
+            {% if user.is_winner %}
+                <h1 class="hero-title">Félicitations !</h1>
+                <div class="message-box">
+                    <span class="highlight-gold">{{ user.full_name }}</span>, vous avez gagné !
+                </div>
+                <p style="color:#ddd; margin-bottom:25px;">
+                    Nous sommes ravis de participer à la magie de votre événement.
+                </p>
+                <a href="tel:+21623022022" class="btn-gold" onclick="alert('Redirection vers WhatsApp/Appel...')">
+                    Contactez-nous pour votre cadeau
+                </a>
+            {% else %}
+                <h1 class="hero-title">Merci pour votre participation</h1>
+                <div class="message-box">
+                    {{ user.full_name }}
+                </div>
+                {% if user.rank %}
+                    <div class="rank-badge">
+                        Rang : {{user.rank}}ème Place
+                    </div>
+                {% endif %}
+                <p style="color:#ddd; margin-top:15px; font-style:italic;">
+                    Restez à l'écoute pour nos prochains événements.
+                </p>
+            {% endif %}
+        </div>
+
+        
+        {% endif %}
+        <div style="font-size:0.8em; color:rgba(255,255,255,0.3); margin-top:30px;">
+            Masmoudi Wedding Planner &copy; 2025
+        </div>
+
+    </div>
+
+    <script>
+        // Get winner status from Jinja render
+        const isWinner = "{{ 'true' if user.is_winner else 'false' }}" === "true";
+
+        window.onload = function() {
+            if (isWinner) {
+                triggerGoldConfetti();
+            }
+        };
+
+        function triggerGoldConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const particleCount = 150;
+
+            // Create Gold & Cream particles
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 5 + 2,
+                    h: Math.random() * 10 + 5,
+                    speed: Math.random() * 3 + 2,
+                    color: Math.random() > 0.5 ? '#d4af37' : '#f0e5d8', // Gold or Cream
+                    angle: Math.random() * 360,
+                    spin: Math.random() < 0.5 ? 1 : -1
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach((p) => {
+                    ctx.save();
+                    ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
+                    ctx.rotate(p.angle * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    ctx.restore();
+
+                    p.y += p.speed;
+                    p.angle += p.spin;
+
+                    if (p.y > canvas.height) {
+                        p.y = -10;
+                        p.x = Math.random() * canvas.width;
+                    }
+                });
+
+                requestAnimationFrame(draw);
+            }
+            
+            draw();
+        }
+
+        // Resize canvas on window resize
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confetti-canvas');
+            if(canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+    </script>
+</body>
+</html>
