@@ -45,14 +45,15 @@ def create_monthly_competition(app):
             now = now_tunis()
             existing = Competition.query.filter(
                 Competition.is_active == True,
-                Competition.registration_deadline >= now
+                Competition.registration_deadline >= now.replace(tzinfo=None)  # ✅
             ).first()
             
             if existing:
                 app.logger.info("Active competition exists. Skipping creation.")
                 return
             
-            start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            # ✅ Strip tzinfo before storing to DB
+            start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
             registration_deadline = start_date + relativedelta(months=DURATION_COMPETITION)
             end_date = start_date + relativedelta(months=DURATION_COMPETITION * 2)
 
